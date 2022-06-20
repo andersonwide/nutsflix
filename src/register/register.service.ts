@@ -50,15 +50,52 @@ export class RegisterService {
     return registers;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} register`;
+  async findOne(id: number) {
+    return await this.prisma.register.findUnique({
+      where: {
+        id: id,
+      }
+    })
   }
 
-  update(id: number, data: UpdateRegisterDto) {
-    return `This action updates a #${id} register`;
+  async update(id: number, data: UpdateRegisterDto) {
+    return await this.prisma.register.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name: data.name,
+        description: data.description,
+        year: data.year,
+        genre:{
+          connectOrCreate:{
+            where:{
+              name: data.genreName
+            },
+            create:{
+              name: data.genreName
+            }
+          }
+        },
+        type:{
+          connectOrCreate:{
+            where:{
+              name: data.typeName
+            },
+            create:{
+              name: data.typeName
+            }
+          }
+        }
+      }
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} register`;
+ async remove(id: number) {
+    return await this.prisma.register.delete({
+      where: {
+        id: id,
+      }
+    })
   }
 }
